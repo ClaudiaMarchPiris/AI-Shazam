@@ -9,7 +9,7 @@ npart = 20
 fftfreqs = np.fft.rfftfreq(sampleSize, 1/aFreq)
 
 # utils
-def partition(fft):
+def partition(rfft):
 	x = []
 	for i in range(len(parts)-1):
 		boxsize = (parts[i+1]-parts[i])//npart
@@ -25,8 +25,11 @@ def partitions():
 #generate toy sound
 T = 10 #seconds
 t = np.arange(T*aFreq)/aFreq
-freqs = [210, 100, 500, 120, 2100, 1200]
-audio = sum(((i+1)*np.sin(2*np.pi*f*t) for i, f in enumerate(freqs)))
+chord1 = [210, 100, 500, 120, 2100, 1200]
+chord2 = [150, 200, 300, 140]
+chord3 = [500, 1600, 1400]
+chord4 = [742, 761, 1245, 612]
+audio = sum(((i+1)*np.sin(2*np.pi*f*t) for i, f in enumerate(chord4)))
 print(audio.shape)
 
 #plot first sample of sound
@@ -34,19 +37,20 @@ plt.subplot(1, 3, 1)
 plt.plot(t[0:sampleSize], audio[0:sampleSize])
 
 #generate rfft and partitions
-rffts = []
-x = []
-for i in range(audio.size//sampleSize):
-	data = audio[sampleSize*i:sampleSize*(i+1)]
-	rfft = np.array(np.abs(np.fft.rfft(data)))
-	# rfft[j] is the amplitude of f_j=j*(aFreq/sampleSize)Hz ~= j*10. 
-	# f_last = aFreq = 44100 Hz, which is 2-3 times higher than the highest note we can hear.
-	rffts.append(rfft)
-	x.append(partition(rfft))
+def convert(audio):
+	rffts = []
+	x = []
+	for i in range(audio.size//sampleSize):
+		data = audio[sampleSize*i:sampleSize*(i+1)]
+		rfft = np.array(np.abs(np.fft.rfft(data)))
+		# rfft[j] is the amplitude of f_j=j*(aFreq/sampleSize)Hz ~= j*10. 
+		# f_last = aFreq = 44100 Hz, which is 2-3 times higher than the highest note we can hear.
+		rffts.append(rfft)
+		x.append(partition(rfft))
+	return np.array(rffts), np.array(x)
 
 #convert to matrix
-rffts = np.array(rffts)
-x = np.array(x)
+rffts, x = convert(audio)
 print(rffts.shape)
 print(x.shape)
 
