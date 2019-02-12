@@ -1,5 +1,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt
+from makeSongs import *
+from mp3ToDigital import *
 
 # constants
 aFreq = 44100
@@ -22,17 +24,13 @@ def partitions():
 		x.append(fftfreqs[parts[i]:parts[i+1]:boxsize])
 	return np.concatenate(x)
 
-#generate toy sound
-T = 10 #seconds
-t = np.arange(T*aFreq)/aFreq
-chord1 = [210, 100, 500, 120, 2100, 1200]
-chord2 = [150, 200, 300, 140]
-chord3 = [500, 1600, 1400]
-chord4 = [742, 761, 1245, 612]
-audio = sum(((i+1)*np.sin(2*np.pi*f*t) for i, f in enumerate(chord4)))
-print(audio.shape)
 
 #plot first sample of sound
+T=10
+t = np.arange(T*aFreq)/aFreq
+# audio = generateSound(t, 2) #Second argument is index of chord in list of chords, were each chord is a list of frequencies.
+audio = fileToArray("A_Quiet_Thought.mp3")
+print(audio.shape)
 plt.subplot(1, 3, 1)
 plt.plot(t[0:sampleSize], audio[0:sampleSize])
 
@@ -48,6 +46,7 @@ def convert(audio):
 		rffts.append(rfft)
 		x.append(partition(rfft))
 	return np.array(rffts), np.array(x)
+
 
 #convert to matrix
 rffts, x = convert(audio)
