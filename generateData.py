@@ -26,7 +26,10 @@ for subdir, dirs, files in os.walk(folder):
 xs = np.concatenate(xs)
 ys = np.concatenate(ys)
 with open(out+"xs.pkl", 'wb') as outfile:
-			pk.dump(xs, outfile, protocol=pk.HIGHEST_PROTOCOL)
+	pk.dump(xs, outfile, protocol=pk.HIGHEST_PROTOCOL)
 with open(out+"ys.pkl", 'wb') as outfile:
-			pk.dump(ys, outfile, protocol=pk.HIGHEST_PROTOCOL)
+	pk.dump(ys, outfile, protocol=pk.HIGHEST_PROTOCOL)
+with open(out+"names.pkl", 'wb') as outfile:
+	pk.dump(names, outfile, protocol=pk.HIGHEST_PROTOCOL)
+
 print(xs.shape, ys.shape)
