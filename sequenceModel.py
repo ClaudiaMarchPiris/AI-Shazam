@@ -3,6 +3,7 @@
 # The long-memeory layer can then hopefully be used to predict the song.
 
 import numpy as np
+import pickle as pk
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import LSTM
@@ -17,7 +18,11 @@ print(x.shape, y.shape)
 
 model = Sequential()
 model.add(Dense(100))
-model.add(LSTM(100, input_shape=(100,1), dropout=0.2))
-model.add(Dense(songs)) 
+model.add(LSTM(50, dropout=0.2))
+model.add(Dense(songs, activation="sigmoid")) 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 model.fit(x, y, batch_size=100, epochs=10)
+print(model.summary())
+
+folder = "models\\"
+model.save(folder+"sequence1.h5")
