@@ -11,7 +11,12 @@ for the_file in os.listdir(folder):
     except Exception as e:
         print(e)
 sequens= 0
-filename = 'data files/sequens'
+filename = 'data files/sequens.pkl'
 outfile = open(filename,'wb')
 pickle.dump(sequens,outfile)
+outfile.close()
+names = []
+filename = 'data files/names.pkl'
+outfile = open(filename,'wb')
+pickle.dump(names,outfile)
 outfile.close()
