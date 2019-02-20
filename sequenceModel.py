@@ -16,6 +16,7 @@ print(x.shape, y.shape)
 
 
 model = Sequential()
+model.add(Dense(100))
 model.add(LSTM(100, input_shape=(100,1), dropout=0.2))
 model.add(Dense(songs)) 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
