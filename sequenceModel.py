@@ -7,22 +7,23 @@ import pickle as pk
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import LSTM
+from keras import backend
 import datainfo # imports songs, x and y
 np.random.seed(7)
 
-x, y, songs = datainfo.getData()
-x = np.expand_dims(x, 2)
+x, y,, = datainfo.getData()
+# x = np.expand_dims(x, 2)
+print(x)
 print(x.shape, y.shape)
 
-
-
+backend.clear_session() #maybe not working
 model = Sequential()
-model.add(Dense(100))
-model.add(LSTM(50, dropout=0.2))
-model.add(Dense(songs, activation="sigmoid")) 
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x, y, batch_size=100, epochs=10)
+model.add(Dense(500))
+# model.add(LSTM(30, dropout=0.05, input_shape=(100,1)))
+model.add(Dense(songs, activation="softmax")) 
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.fit(x, y, batch_size=100, epochs=20)
 print(model.summary())
 
 folder = "models\\"
-model.save(folder+"sequence1.h5")
+model.save(folder+"simplest.h5")

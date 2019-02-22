@@ -40,11 +40,13 @@ import matplotlib.pyplot as plt
 # TESTING xs and ys
 #######################################
 import datainfo
-# x, y, songs = datainfo.getData()
-# print(y)
-# plt.subplot(1,2,1)
-# plt.plot(np.arange(y.shape[0]), np.argmax(y, axis=1))
-# plt.show()
+x, y, songs, ind = datainfo.getData()
+def visualdata():
+	print(x.shape, y.shape)
+	plt.plot(np.arange(x.shape[0]), x)
+	for i in ind:
+		plt.axvline(x=i)
+	plt.show()
 
 
 #######################################
@@ -54,13 +56,15 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import LSTM
 
-x, y, songs = datainfo.getData()
-x = np.expand_dims(x, 2)
+def visualeval():
+	# x = np.expand_dims(x, 2)
+	folder = "models\\"
+	model = load_model(folder+"simplest.h5")
+	out = model.predict(x)
+	print(out)
+	print(out.shape)
+	plt.plot(np.arange(out.shape[0]), out)
+	plt.legend([str(i) for i in range(songs)])
+	plt.show()
 
-folder = "models\\"
-model = load_model(folder+"sequence1.h5")
-out = model.predict(x)
-print(out)
-print(out.shape)
-plt.plot(np.arange(out.shape[0]), out)
-plt.show()
+visualdata()
