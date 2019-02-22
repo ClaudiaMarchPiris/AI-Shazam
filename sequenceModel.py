@@ -7,18 +7,19 @@ import pickle as pk
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import LSTM
+from keras.preprocessing import sequence
 from keras import backend
 import datainfo # imports songs, x and y
 np.random.seed(7)
 
 x, y,, = datainfo.getData()
-# x = np.expand_dims(x, 2)
+datagen = sequence.TimeseriesGenerator(x,y,x.shape[0])
 print(x)
 print(x.shape, y.shape)
 
 backend.clear_session() #maybe not working
 model = Sequential()
-model.add(Dense(500))
+model.add(Dense(1000))
 # model.add(LSTM(30, dropout=0.05, input_shape=(100,1)))
 model.add(Dense(songs, activation="softmax")) 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
