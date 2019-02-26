@@ -39,8 +39,8 @@ import matplotlib.pyplot as plt
 #######################################
 # TESTING xs and ys
 #######################################
-import datainfo
-x, y, songs, ind = datainfo.getData()
+from datainfo import *
+x, y, ind = getData()
 def visualdata():
 	print(x.shape, y.shape)
 	plt.plot(np.arange(x.shape[0]), x)
@@ -54,17 +54,22 @@ def visualdata():
 #######################################
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation
-from keras.layers import LSTM
+from keras.layers import LSTM, TimeDistributed
 
 def visualeval():
-	# x = np.expand_dims(x, 2)
 	folder = "models\\"
-	model = load_model(folder+"simplest.h5")
-	out = model.predict(x)
-	print(out)
+	model = load_model(folder+"2lstm256b1n20e20.h5")
+	tests, facit = getRandomChunks(3, 10)
+	out = np.concatenate([np.argmax(model.predict(test).reshape((20,20,30)), axis = 2) for test in tests])
 	print(out.shape)
+	print(facit.shape)
+	correct = np.equal(out,facit)
+	print(np.sum(correct)/correct.size)
+	plt.subplot(1,2,1)
 	plt.plot(np.arange(out.shape[0]), out)
+	plt.subplot(1,2,2) 
+	plt.plot(np.arange(facit.shape[0]), facit)
 	plt.legend([str(i) for i in range(songs)])
 	plt.show()
 
-visualdata()
+visualeval()
