@@ -46,7 +46,7 @@ def getRandomChunks(n, l):
 	gen = KerasBatchGenerator(x, y, batch_size, num_steps)
 	tests = []
 	facit = []
-	for i in range(10):
+	for i in range(n):
 		for j in range(randint(0,500)):
 			next(gen.generate()) #skip random amount of batches
 		for j in range(l):

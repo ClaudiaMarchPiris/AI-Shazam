@@ -56,12 +56,24 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import LSTM, TimeDistributed
 
-def visualeval():
+def visualEval(name):
 	folder = "models\\"
-	model = load_model(folder+"2lstm256b1n20e20.h5")
-	tests, facit = getRandomChunks(3, 10)
-	out = np.concatenate([np.argmax(model.predict(test).reshape((20,20,30)), axis = 2) for test in tests])
+	model = load_model(folder+name+".h5")
+	x, y, _ = getData()
+	batch_size = 20
+	num_steps = 20
+	gen = KerasBatchGenerator(x, y, batch_size, num_steps)
+	tests = []
+	facit = []
+	out = []
+	for i in range(x.shape[0]//(10*batch_size*num_steps)):
+		x, y = next(gen.generate())
+		out.append(model.predict(x))
+		facit.append(y)
+	outgen = [o.reshape((batch_size*num_steps, 30)) for o in out]
+	out = np.concatenate(outgen, axis = 0)
 	print(out.shape)
+	facit = np.concatenate([y.reshape((batch_size*num_steps, 30)) for y in facit], axis = 0)
 	print(facit.shape)
 	correct = np.equal(out,facit)
 	print(np.sum(correct)/correct.size)
@@ -72,4 +84,32 @@ def visualeval():
 	plt.legend([str(i) for i in range(songs)])
 	plt.show()
 
-visualeval()
+def visualEvalArgmax(name):
+	folder = "models\\"
+	model = load_model(folder+name+".h5")
+	x, y, _ = getData()
+	batch_size = 20
+	num_steps = 20
+	gen = KerasBatchGenerator(x, y, batch_size, num_steps)
+	tests = []
+	facit = []
+	out = []
+	for i in range(x.shape[0]//(batch_size*num_steps)):
+		x, y = next(gen.generate())
+		out.append(model.predict(x))
+		facit.append(y)
+	outgen = [np.argmax(o.reshape((batch_size*num_steps, 30)), axis=1) for o in out]
+	out = np.concatenate(outgen, axis = 0)
+	print(out.shape)
+	facit = np.concatenate([np.argmax(y.reshape((batch_size*num_steps, 30)), axis=1) for y in facit], axis = 0)
+	print(facit.shape)
+	correct = np.equal(out,facit)
+	print(np.sum(correct)/correct.size)
+	plt.subplot(1,2,1)
+	plt.plot(np.arange(out.shape[0]), out)
+	plt.subplot(1,2,2) 
+	plt.plot(np.arange(facit.shape[0]), facit)
+	plt.legend([str(i) for i in range(songs)])
+	plt.show()
+
+visualEvalArgmax("wednesday2+300")
