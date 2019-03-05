@@ -56,13 +56,14 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import LSTM, TimeDistributed
 
+folder = "models\\"	
+x, y, _ = getData()
+batch_size = 20
+num_steps = 20
+gen = KerasBatchGenerator(x, y, batch_size, num_steps)
+
 def visualEval(name):
-	folder = "models\\"
 	model = load_model(folder+name+".h5")
-	x, y, _ = getData()
-	batch_size = 20
-	num_steps = 20
-	gen = KerasBatchGenerator(x, y, batch_size, num_steps)
 	tests = []
 	facit = []
 	out = []
@@ -85,18 +86,13 @@ def visualEval(name):
 	plt.show()
 
 def visualEvalArgmax(name):
-	folder = "models\\"
 	model = load_model(folder+name+".h5")
-	x, y, _ = getData()
-	batch_size = 20
-	num_steps = 20
-	gen = KerasBatchGenerator(x, y, batch_size, num_steps)
 	tests = []
 	facit = []
 	out = []
 	for i in range(x.shape[0]//(batch_size*num_steps)):
-		x, y = next(gen.generate())
-		out.append(model.predict(x))
+		t, y = next(gen.generate())
+		out.append(model.predict(t))
 		facit.append(y)
 	outgen = [np.argmax(o.reshape((batch_size*num_steps, 30)), axis=1) for o in out]
 	out = np.concatenate(outgen, axis = 0)
@@ -112,4 +108,29 @@ def visualEvalArgmax(name):
 	plt.legend([str(i) for i in range(songs)])
 	plt.show()
 
-visualEvalArgmax("wednesday2+300")
+def testSong(name, i):
+	model = load_model(folder+name+".h5")
+	t, y = next(gen.generate())
+	while (np.argmax(y.reshape(400, 30), axis=1)<i).any():
+		t, y = next(gen.generate())
+	plt.ion()
+	fig = plt.figure()
+	ax = fig.add_subplot(111)
+	plt.ylim(0,1)
+	xax = np.arange(songs)
+	song = plt.axvline(x=i)
+	outs = np.zeros((1,songs))
+	line1, = ax.plot(xax, outs.T, 'r-')
+	while True:
+		outs = np.vstack((outs, model.predict(t).reshape(400,30)))
+		line1.set_ydata(np.average(outs, axis = 0).T)
+		fig.canvas.draw()
+		fig.canvas.flush_events()
+		t, y = next(gen.generate())
+		if (np.argmax(y.reshape(400, 30), axis = 1)!=i).any():
+			i = (i+1)%songs
+			outs = np.zeros((1,songs))
+			song.set_xdata(i)
+
+
+testSong("wednesday2+8000", 4)
