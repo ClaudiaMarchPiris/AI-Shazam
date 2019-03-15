@@ -8,8 +8,8 @@ from audioToData import *
 # and generate files for each song as well as a large file containing the whole dataset to
 # train and test our model on.
 
-folder = "sounds\\"                #
-out = "data\\"                     #  Assign constants.
+folder = "sounds\\"                #  Assign constants.
+out = "data\\"                     #  
 songs = 30                         #
 
 def generateData():
