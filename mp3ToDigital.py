@@ -3,15 +3,11 @@
 from pydub import AudioSegment
 import numpy as np
 
-folder = "sounds\\"
+# Using the method fileToArray we convert the mp3. file formated songs into 
+# an array of amplitude over time, later to be converted to frequency domain.
+
+folder = "sounds\\"					# Assign constants.
+
 def fileToArray(file):
-	sound = AudioSegment.from_mp3(folder+file)
-	return np.array(sound.get_array_of_samples())
-#five_seconds = sound[:5000] # get the first five seconds of an mp3
-
-#raw_data = sound._data
-#raw_data = five_seconds._data
-
-# I want to see how is the raw data 
-# I want to get the frequencies
-#print("Raw data:"+raw_data)
+	sound = AudioSegment.from_mp3(folder+file)      # Converts file in folder to discrete amplitude over time using the pydub library.
+	return np.array(sound.get_array_of_samples())   #
