@@ -37,7 +37,8 @@ import matplotlib.pyplot as plt
 # plt.show()
 
 #######################################
-# TESTING xs and ys
+# TESTING xs. 
+# Plots how all features vary over time with vertical lines marking the beginning of a new song.
 #######################################
 from datainfo import *
 x, y, ind = getData()
@@ -56,15 +57,16 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import LSTM, TimeDistributed
 
-folder = "models\\"			# 
-batch_size = 20				#	
-num_steps = 20				#
+folder = "models\\" 
+batch_size = 20						# Must be same as the model was initially trained on
+num_steps = 20						# 
 
 x, y, _ = getData()
-
 gen = KerasBatchGenerator(x, y, batch_size, num_steps)
 
-def visualEval(name):
+#################################################################################################################################
+
+def visualEval(name): 					# Plots the output over one entire epoch, not very useful
 	model = load_model(folder+name+".h5")
 	tests = []
 	facit = []
@@ -86,8 +88,10 @@ def visualEval(name):
 	plt.plot(np.arange(facit.shape[0]), facit)
 	plt.legend([str(i) for i in range(songs)])
 	plt.show()
+	
+#################################################################################################################################
 
-def visualEvalArgmax(name):
+def visualEvalArgmax(name): 				# Plots the argmax of the outputs over one entire epoch, zoom in for patterns
 	model = load_model(folder+name+".h5")
 	tests = []
 	facit = []
@@ -104,13 +108,15 @@ def visualEvalArgmax(name):
 	correct = np.equal(out,facit)
 	print(np.sum(correct)/correct.size)
 	plt.subplot(1,2,1)
-	plt.plot(np.arange(out.shape[0]), out)
+	plt.plot(np.arange(out.shape[0]), out, '.')
 	plt.subplot(1,2,2) 
-	plt.plot(np.arange(facit.shape[0]), facit)
+	plt.plot(np.arange(facit.shape[0]), facit, '.')
 	plt.legend([str(i) for i in range(songs)])
 	plt.show()
+	
+#################################################################################################################################
 
-def testSong(name, i):
+def testSong(name, i): 					# An animation of confidence distribution looping through training data
 	model = load_model(folder+name+".h5")
 	t, y = next(gen.generate())
 	while (np.argmax(y.reshape(400, 30), axis=1)<i).any():
