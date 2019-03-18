@@ -17,7 +17,7 @@ def partition(rfft):
 		boxsize = (parts[i+1]-parts[i])//npart					     # and assigns them to equaly sized ranges of 20
 		x.append(sum((rfft[parts[i]+j:parts[i+1]:boxsize] for j in range(boxsize)))) #
 	
-	return np.concatenate(x)							     # concatenate the results to create array of lenght 100
+	return np.concatenate(x)							     # concatenate the results to create array of length 100
 
 def partitions():									    
 	
@@ -41,8 +41,8 @@ def convert(audio):
 		
 		rfft = np.array(np.abs(np.fft.rfft(data)))				     # Use the numpy library to calculate the fast fourier transform
 		
-		rffts.append(rfft)							     # 
-		x.append(partition(rfft))						     #
+		rffts.append(rfft)							     # Appends the rfft to rffts
+		x.append(partition(rfft))						     # Appends the partitioned rfft to the total representation of the song x
 		
 	return np.array(rffts), np.array(x)
 
