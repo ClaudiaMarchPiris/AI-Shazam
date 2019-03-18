@@ -58,7 +58,7 @@ from keras.layers import Dense, Dropout, Activation
 from keras.layers import LSTM, TimeDistributed
 
 folder = "models\\" 
-batch_size = 20						# Must be same as the model was initially trained on
+batch_size = 20						# Must be same as the model was initially trained on.
 num_steps = 20						# 
 
 x, y, _ = getData()
@@ -66,7 +66,7 @@ gen = KerasBatchGenerator(x, y, batch_size, num_steps)
 
 #################################################################################################################################
 
-def visualEval(name): 					# Plots the output over one entire epoch, not very useful
+def visualEval(name): 					# Plots the output over one entire epoch, not very useful.
 	model = load_model(folder+name+".h5")
 	tests = []
 	facit = []
@@ -91,7 +91,7 @@ def visualEval(name): 					# Plots the output over one entire epoch, not very us
 	
 #################################################################################################################################
 
-def visualEvalArgmax(name): 				# Plots the argmax of the outputs over one entire epoch, zoom in for patterns
+def visualEvalArgmax(name): 				# Plots the argmax of the outputs over one entire epoch, zoom in for patterns.
 	model = load_model(folder+name+".h5")
 	tests = []
 	facit = []
@@ -116,7 +116,7 @@ def visualEvalArgmax(name): 				# Plots the argmax of the outputs over one entir
 	
 #################################################################################################################################
 
-def testSong(name, i): 					# An animation of confidence distribution looping through training data
+def testSong(name, i): 					# An animation of confidence distribution looping through training data.
 	model = load_model(folder+name+".h5")
 	t, y = next(gen.generate())
 	while (np.argmax(y.reshape(400, 30), axis=1)<i).any():
