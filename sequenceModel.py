@@ -2,58 +2,101 @@
 # The idea is that people usually try to sing along a bit before remembering what the song is called.
 # The long-memeory layer can then hopefully be used to predict the song.
 
-import numpy as np
-import pickle as pk
-from keras.models import Sequential, load_model
-from keras.layers import Dense, Dropout, Activation
-from keras.layers import LSTM, TimeDistributed
-from keras.preprocessing import sequence
-from keras import backend
-from datainfo import * # imports songs, x and y
-np.random.seed(7) 
-# data and parameters
-x, y, _ = getData()
-batch_size = 1
-num_steps = 200
-# This is weird. For some reason Keras LSTM is meant to erase the 
-# hidden memory state after num_steps time steps unless you set stateful=true.
-gen = KerasBatchGenerator(x, y, batch_size, num_steps)
+import numpy as np					# Library imports
+import pickle as pk					#
+from keras.models import Sequential, load_model		#
+from keras.layers import Dense, Dropout, Activation	#
+from keras.layers import LSTM, TimeDistributed		#
+from keras.preprocessing import sequence		#
+from keras import backend				#
 
-def train(name, epochs):
-	############# model
-	backend.clear_session() #maybe not working
-	model = Sequential()
-	model.add(LSTM(256, return_sequences=True, batch_input_shape=(batch_size, num_steps, x.shape[1]), activation='tanh')) 
-	model.add(LSTM(256, dropout=0.05, return_state=True, activation='tanh')) 
-	model.add(Dense(songs, activation="softmax")) 
-	model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy']) 
-	model.fit_generator(gen.generate(), x.shape[0]//(batch_size*num_steps), epochs, shuffle=true) 
-	print(model.summary()) 
-	############# save
-	folder = "models\\"
-	model.save(folder+name+".h5")
+from datainfo import * 					# Imports songs, x and y
 
-def trainMore(name, epochs):
-	############# model
-	folder = "models\\"
-	model = load_model(folder+name+".h5")
-	model.fit_generator(gen.generate(), x.shape[0]//(batch_size*num_steps), epochs)
-	print(model.summary())
-	############## save 
-	model.save(folder+name+".h5")
 
-def trainForever(name, epochsasave):
-	############# model
-	folder = "models\\"
-	model = load_model(folder+name+".h5")
-	times = 0
+
+np.random.seed(7) 			# Sets numpy seed		
+
+
+x, y, _ = getData()			# Retrieves data to train network on
+
+batch_size = 1				# Constants for model specifications
+num_steps = 200				#
+folder = "models\\"			#
+
+gen = KerasBatchGenerator(x, y, batch_size, num_steps)	# Calls KerasBatchGeneraor with specified constants to recive generator
+
+####################################################################################################################################
+
+def train(name, epochs):					# Creates a model of with name=name and trains for ammount of epochs=epochs
+	
+	backend.clear_session() 				# Clears session if there is one active
+	
+	model = Sequential()					# Creates a sequential model
+	
+	model.add(LSTM(256,					# Adds a LSTM layer and sets all parameters.
+		       return_sequences=True,			#
+		       batch_input_shape=(batch_size,		#
+					  num_steps,		#
+					  x.shape[1]),		#
+		       activation='tanh')) 			#
+	
+	#model.add(LSTM(256,					# Potential sequenced LSTM layer and its parameyers
+	#		dropout=0.05,				#
+	#		return_state=True,			#
+	#		activation='tanh')) 			#
+	
+	model.add(Dense(songs,					# Adds a dense layer as output layer
+			activation="softmax")) 			#
+	
+	model.compile(loss='categorical_crossentropy',		# Sets general parameters for the model
+		      optimizer='sgd',				#
+		      metrics=['accuracy']) 			#
+	
+	model.fit_generator(gen.generate(),			# Sets parameters for training
+			    x.shape[0]//(batch_size*num_steps),	#
+			    epochs,				#
+			    shuffle=true) 			#
+	
+	print(model.summary()) 					# Prints a summary of the model
+						
+	model.save(folder+name+".h5")				# Saves the model
+	
+####################################################################################################################################
+
+def trainMore(name, epochs):					# Allows for further training of existing model
+	
+	
+	model = load_model(folder+name+".h5")			# Loads model
+	
+	model.fit_generator(gen.generate(),			# Sets parameters for training
+			    x.shape[0]//(batch_size*num_steps),	#
+			    epochs)				#
+	
+	print(model.summary())					# Prints a summary of the model				
+	
+	model.save(folder+name+".h5")				# Saves the model
+
+####################################################################################################################################
+
+def trainForever(name, epochsasave):				# Allows for indefinite training of existing model
+	
+	times = 0						# times = counter
+	
+	model = load_model(folder+name+".h5")			# Loads model
+	
 	while(True):
-		print("Times:", times)
-		model.fit_generator(gen.generate(), x.shape[0]//(batch_size*num_steps), epochsasave)
-		print(model.summary())
-		############## save 
-		model.save(folder+name+".h5")
-		times += 1
+		print("Times:", times)					# prints ammount of times the model has trained through its epochs
+		
+		model.fit_generator(gen.generate(),			#Sets parameters for training
+				    x.shape[0]//(batch_size*num_steps),	#
+				    epochsasave)			#
+		
+		print(model.summary())					# Prints a summary of the model
+		
+		model.save(folder+name+".h5")				# Saves the model
+		
+		times += 1						# increment times to account for number of iterations
 
+####################################################################################################################################
 
 train("special", 10)
