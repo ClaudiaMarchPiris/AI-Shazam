@@ -23,7 +23,7 @@ batch_size = 1				# Constants for model specifications.
 num_steps = 200				#
 folder = "models\\"			#
 
-gen = KerasBatchGenerator(x, y, batch_size, num_steps)	# Calls KerasBatchGeneraor with specified constants to recive generator
+gen = KerasBatchGenerator(x, y, batch_size, num_steps)	# Calls KerasBatchGeneraor with specified constants to recive generator.
 
 ####################################################################################################################################
 
@@ -85,9 +85,9 @@ def trainForever(name, epochsasave):				# Allows for indefinite training of exis
 	model = load_model(folder+name+".h5")			# Loads model.
 	
 	while(True):
-		print("Times:", times)					# prints ammount of times the model has trained through its epochs
+		print("Times:", times)					# Prints ammount of times the model has trained through its epochs
 		
-		model.fit_generator(gen.generate(),			#Sets parameters for training.
+		model.fit_generator(gen.generate(),			# Sets parameters for training.
 				    x.shape[0]//(batch_size*num_steps),	#
 				    epochsasave)			#
 		
@@ -95,7 +95,7 @@ def trainForever(name, epochsasave):				# Allows for indefinite training of exis
 		
 		model.save(folder+name+".h5")				# Saves the model.
 		
-		times += 1						# increment times to account for number of iterations.
+		times += 1						# Increment times to account for number of iterations.
 
 ####################################################################################################################################
 
