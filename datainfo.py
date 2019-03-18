@@ -3,26 +3,26 @@ import numpy as np
 from random import randint
 songs = 30
 
-class KerasBatchGenerator(object):
+###################################################################################################################################
+
+class KerasBatchGenerator(object): 				# Creates an object as an interface between data and keras fit_generator
 	def __init__(self, data, labs, batch_size, num_steps):
 		self.data = data
 		self.labs = labs
 		self.num_steps = num_steps
 		self.batch_size = batch_size
-		# this will track the progress of the batches sequentially through the
-		# data set - once the data reaches the end of the data set it will reset
-		# back to zero
-		self.current_idx = 0
-	def generate(self):
-		x = np.zeros((self.batch_size, self.num_steps, self.data.shape[1]))
+		self.current_idx = 0				# current_idx will track the progress of the batches sequentially through the
+								# data set - once the data reaches the end of the data set it will reset
+								# back to zero
+		
+	def generate(self): 					# Returns a batch_size long list of sequences of length num_steps
+		x = np.zeros((self.batch_size, 
+			      self.num_steps, 
+			      self.data.shape[1]))
 		y = np.zeros((self.batch_size, self.num_steps, songs))
 		while True:
 			for i in range(self.batch_size):
-				# n = randint(0,self.num_steps)
-				# skip to beginning of next song if we reach the end within sample
-				# if not argmax(self.labs[self.current_idx])==argmax(self.labs[self.current_idx+self.num_steps]):
-				# 	self.current_idx += self.num_steps
-				# reset the index back to the start of the data set if we reach the end
+								# reset the index back to the start of the data set if we reach the end
 				if self.current_idx + self.num_steps > len(self.data):
 					self.current_idx = 0
 				x[i, :] = self.data[self.current_idx:self.current_idx + self.num_steps]
@@ -30,34 +30,9 @@ class KerasBatchGenerator(object):
 				self.current_idx += self.num_steps
 			yield x, y
 
+###################################################################################################################################
 
-class SingAlongGen(object):
-	def __init__(self, data, labs, batch_size, num_steps):
-		self.data = data
-		self.labs = labs
-		self.num_steps = num_steps
-		self.batch_size = batch_size
-		# this will track the progress of the batches sequentially through the
-		# data set - once the data reaches the end of the data set it will reset
-		# back to zero
-		self.current_idx = 0
-	def generate(self):
-		x = np.zeros((self.batch_size, self.num_steps, self.data.shape[1]))
-		y = np.zeros((self.batch_size, self.num_steps, self.data.shape[1]))
-		while True:
-			for i in range(self.batch_size):
-				# skip to beginning of next song if we reach the end during sample
-				if not argmax(self.labs[self.current_idx])==argmax(self.labs[self.current_idx+self.batch_size+1]):
-					self.current_idx += self.num_steps
-				# reset the index back to the start of the data set if we reach the end
-				if self.current_idx + self.num_steps >= len(self.data):
-					self.current_idx = 0
-				x[i, :] = self.data[self.current_idx:self.current_idx + self.num_steps]
-				y[i, :] = self.data[self.current_idx+1:self.current_idx + self.num_steps+1]
-				self.current_idx += self.num_steps
-			yield x, y
-
-def getData():
+def getData(): 						# Load data into numpy array and return
 	with open("data\\xs.pkl", "rb") as file:
 		x = pk.load(file)
 	with open("data\\ys.pkl", "rb") as file:
@@ -69,9 +44,11 @@ def getData():
 		while i<y.shape[0] and y[i,j]:
 			i+=1
 	return x, y, indices
+
+##################################################################################################################################
 	
-def getRandomChunks(n, l):
-	x, y, _ = getData()
+def getRandomChunks(n, l): 				# create random sequence of tests through n sequences of length l*batch_size
+	x, y, _ = getData()				# concatenated into single matrix.
 	gen = KerasBatchGenerator(x, y, batch_size, num_steps)
 	tests = []
 	facit = []
