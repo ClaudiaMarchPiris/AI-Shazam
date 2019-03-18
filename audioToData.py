@@ -14,8 +14,8 @@ fftfreqs = np.fft.rfftfreq(sampleSize, 1/aFreq)		#
 def partition(rfft):										
 	x = []										     # Create array-holders for the partitioning. 
 	
-	for i in range(len(parts)-1):							     # Goes though the different frequency ranges
-		boxsize = (parts[i+1]-parts[i])//npart					     # and assigns them to equaly sized ranges of 20.
+	for i in range(len(parts)-1):							     # Goes through the different frequency ranges
+		boxsize = (parts[i+1]-parts[i])//npart					     # and assigns them to equally sized ranges of 20.
 		x.append(sum((rfft[parts[i]+j:parts[i+1]:boxsize] for j in range(boxsize)))) #
 	
 	return np.concatenate(x)							     # Concatenate the results to create array of length 100.
