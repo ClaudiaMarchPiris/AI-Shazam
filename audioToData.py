@@ -9,6 +9,7 @@ parts = [0,20,40,80,160,320]				#
 npart = 20						#
 fftfreqs = np.fft.rfftfreq(sampleSize, 1/aFreq)		#
 
+####################################################################################################################################
 
 def partition(rfft):										
 	x = []										     # Create array-holders for the partitioning  of 
@@ -18,6 +19,8 @@ def partition(rfft):
 		x.append(sum((rfft[parts[i]+j:parts[i+1]:boxsize] for j in range(boxsize)))) #
 	
 	return np.concatenate(x)							     # concatenate the results to create array of length 100
+
+####################################################################################################################################
 
 def partitions():									    
 	
@@ -29,6 +32,7 @@ def partitions():
 		
 	return np.concatenate(x)  							     #
 
+####################################################################################################################################
 
 def convert(audio):
 	
