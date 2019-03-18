@@ -20,21 +20,21 @@ def generateData():
 		i = 0
 		for file in files:
 			waveform = fileToArray(file)                           # Calls mp3ToDigital.fileToArray() with current song converting it to a array of amplitudes. 
-			_, x = convert(waveform)                               # Calls the method audioToData.convert() finalizing preprocessing the the songs entirety.
+			_, x = convert(waveform)                               # Calls the method audioToData.convert() finalizing preprocessing the songs entirety.
 			
-			with open(out+str(i)+".pkl", 'wb') as outfile:             # Saves the processed song into a .pkl file
+			with open(out+str(i)+".pkl", 'wb') as outfile:             # Saves the processed song into a .pkl file.
 				pk.dump(x, outfile, protocol=pk.HIGHEST_PROTOCOL)  # 
 			xs.append(x)                                               #
 			
-			y = np.zeros((x.shape[0], songs))                          # Creates and appends the one-hot encoded "correct answers" to the song
+			y = np.zeros((x.shape[0], songs))                          # Creates and appends the one-hot encoded "correct answers" to the song.
 			y[:,i]=1						   # 
 			ys.append(y)						   #
 			
-			names.append(os.path.splitext(file)[0])                    # Appenends the name of the song to the name array
+			names.append(os.path.splitext(file)[0])                    # Appenends the name of the song to the name array.
 			
 			i+=1                                               
 			
-	xs = np.concatenate(xs)							   # Concatenates all the songs fingerprints aswell as their " correct answers" 
+	xs = np.concatenate(xs)							   # Concatenates all the song's fingerprints aswell as their "correct answers".
 	ys = np.concatenate(ys)							   #
 	
 	with open(out+"xs.pkl", 'wb') as outfile:                                  # Saves the final .pkl files for songs, answers and names.
