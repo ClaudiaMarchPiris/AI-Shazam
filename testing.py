@@ -56,10 +56,12 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import LSTM, TimeDistributed
 
-folder = "models\\"	
+folder = "models\\"			# 
+batch_size = 20				#	
+num_steps = 20				#
+
 x, y, _ = getData()
-batch_size = 20
-num_steps = 20
+
 gen = KerasBatchGenerator(x, y, batch_size, num_steps)
 
 def visualEval(name):
