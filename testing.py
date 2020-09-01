@@ -43,9 +43,11 @@ from datainfo import *
 x, y, ind = getData()
 def visualdata():
 	print(x.shape, y.shape)
-	plt.plot(np.arange(x.shape[0]), x)
+	plt.plot(np.arange(200), x[0:200])
 	for i in ind:
 		plt.axvline(x=i)
+	plt.show()
+	plt.plot(np.arange(x.shape[0]), np.argmax(y, axis = 1))
 	plt.show()
 
 
@@ -55,6 +57,9 @@ def visualdata():
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import LSTM, TimeDistributed
+
+from mp3ToDigital import record
+from audioToData import *
 
 folder = "models\\"	
 x, y, _ = getData()
@@ -79,7 +84,7 @@ def visualEval(name):
 	correct = np.equal(out,facit)
 	print(np.sum(correct)/correct.size)
 	plt.subplot(1,2,1)
-	plt.plot(np.arange(out.shape[0]), out)
+	plt.plot(np.arange(out.shape[0]), out, '.')
 	plt.subplot(1,2,2) 
 	plt.plot(np.arange(facit.shape[0]), facit)
 	plt.legend([str(i) for i in range(songs)])
@@ -102,12 +107,12 @@ def visualEvalArgmax(name):
 	correct = np.equal(out,facit)
 	print(np.sum(correct)/correct.size)
 	plt.subplot(1,2,1)
-	plt.plot(np.arange(out.shape[0]), out)
+	plt.plot(np.arange(out.shape[0]), out, '.')
 	plt.subplot(1,2,2) 
 	plt.plot(np.arange(facit.shape[0]), facit)
 	plt.legend([str(i) for i in range(songs)])
 	plt.show()
-
+import time
 def testSong(name, i):
 	model = load_model(folder+name+".h5")
 	t, y = next(gen.generate())
@@ -127,10 +132,47 @@ def testSong(name, i):
 		fig.canvas.draw()
 		fig.canvas.flush_events()
 		t, y = next(gen.generate())
+		time.sleep(0.1)
 		if (np.argmax(y.reshape(400, 30), axis = 1)!=i).any():
 			i = (i+1)%songs
 			outs = np.zeros((1,songs))
 			song.set_xdata(i)
 
+def testRecord(name):
+	model = load_model(folder+name+".h5")
+	newmodel = Sequential()
+	newmodel.add(LSTM(256, return_sequences=True, batch_input_shape=(1, num_steps, x.shape[1]), activation='sigmoid')) 
+	# newmodel.add(LSTM(256, dropout=0.05, return_sequences=True, activation='sigmoid')) 
+	newmodel.add(Dense(songs, activation="softmax"))
+	newmodel.set_weights(model.get_weights())
+	newmodel.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
+	plt.ion()
+	fig = plt.figure()
+	ax = fig.add_subplot(111)
+	plt.ylim(0,1)
+	xax = np.arange(songs)
+	outs = np.zeros((1,songs))
+	line1, = ax.plot(xax, np.average(outs, axis = 0).T, 'r-')
+	i = 0
+	while True:
+		print(i)
+		waveform = record(2)
+		print(np.isnan(waveform).any())
+		_, t = convert(waveform)
+		print(np.isnan(t).any())
+		out = newmodel.predict(t[:20].reshape(1,20,100), batch_size=1).reshape(20,30)
+		print(np.isnan(out).any())
+		outs = np.vstack((outs, out))
+		line1.set_ydata(np.average(outs, axis = 0).T)
+		fig.canvas.draw()
+		fig.canvas.flush_events()
+		i += 1
+		if outs.shape[0]>500:
+			outs = np.zeros((1,songs))
 
-testSong("wednesday2+8000", 4)
+
+
+model = load_model("models\\wednesday2+8000.h5")
+print("\n")
+print(model.get_config())
+# testSong("wednesday2+8000", 3)

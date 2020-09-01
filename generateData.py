@@ -34,3 +34,9 @@ def generateData():
 		pk.dump(names, outfile, protocol=pk.HIGHEST_PROTOCOL)
 
 	print(xs.shape, ys.shape)
+# from mp3ToDigital import record
+# def generateRecording(500):
+# 	recording = record(500)
+# 	_, x = convert(waveform)
+# 	with open("rec.pkl", 'wb') as outfile:
+# 		pk.dump(x, outfile, protocol=pk.HIGHEST_PROTOCOL)
